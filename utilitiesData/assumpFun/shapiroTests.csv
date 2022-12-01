@@ -1,0 +1,5 @@
+"Marker","statistic","p.value","sig","normal"
+"MarkerA",0.945819632455381,4.68400050719126e-09,"Sig","Not normal"
+"MarkerB",0.948176297023659,8.63168708439323e-09,"Sig","Not normal"
+"MarkerC",0.959054326940932,1.84428465704895e-07,"Sig","Not normal"
+"MarkerD",0.963592917693343,7.59981188839859e-07,"Sig","Not normal"
