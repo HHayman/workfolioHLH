@@ -2,9 +2,9 @@ geneStatus <-
   function(maf = NULL,
            ID = NULL,
            genes = NULL) {
-
+    
     variantClassificationGenesTotal <- maf@gene.summary %>% arrange(Hugo_Symbol)
-
+    
     #### Variant classifications parent data
     variantsTable <- maf@data %>% select(any_of(c(ID, "Hugo_Symbol", "Variant_Classification")))
     dataFramesParent <-
@@ -35,13 +35,13 @@ geneStatus <-
       }
     }
     
-
+    
     # Get row number
     rows <- nrow(dataFramesParent)
-
+    
     # Create vector to hold codes
     zeroCount <- vector()
-
+    
     # Generate multihit codes
     for (i in 1:nrow(dataFramesParent)) {
       tempData <- dataFramesParent[i,] %>% t() %>% data.frame()
@@ -50,8 +50,8 @@ geneStatus <-
                1, zeroCount[i] <- 0)
     }
     dataFramesParent$multiCode <- zeroCount
-
-
+    
+    
     # Set individual codes
     dataFramesParent <- dataFramesParent %>%
       mutate(indivCode = 0) %>%
@@ -66,30 +66,33 @@ geneStatus <-
           Splice_Site > 0 ~ 7
         )
       )
-
-
+    
+    
     # Set parent code
     dataFramesParent$variantCode <-
       ifelse(dataFramesParent$multiCode == 1,
              8,
              dataFramesParent$indivCode)
-
+    
     # Arrange columns
     dataFramesParent <- dataFramesParent %>% select(-c(multiCode, indivCode)) %>% dplyr::relocate(variantCode, .after = ID)
-
+    
     ## Summing scores
     dataFramesParent[, 4:10] <-
       lapply(dataFramesParent[, 4:10], as.numeric)
     dataFramesParent <-
-      dataFramesParent %>% mutate(TotalMut = rowSums(dataFramesParent[, 4:10]))
-
-
-
-
-    return(dataFramesParent %>% filter(Gene %in% genes))
-
-
-
-
-
+      dataFramesParent %>%
+      mutate(TotalMut = rowSums(dataFramesParent[, 4:10])) %>%
+      filter(Gene %in% genes) %>%
+      mutate(Gene = as.character(Gene), ID = as.character(ID)) %>%
+      data.frame()
+    
+    
+    
+    return(dataFramesParent)
+    
+    
+    
+    
+    
   }
